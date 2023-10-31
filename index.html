@@ -18,20 +18,573 @@
 <body>
 	<div class="reveal">
 		<div class="slides">
+			<!--First page-->
+			<!--Slide 1-->
 			<section>
-				<h1>Demo Presentation</h1>
+				<h1>Java 21 features presentation</h1>
 			</section>
-			<section>
-				<h2>I'm a Sub Heading</h2>
-				<p>Here is some content.</p>
+
+			<!--Core extensions-->
+			<!--Slide 2-->
+			<section data-auto-animate>
+				<style>
+					.fragment.blur {
+						filter: blur(5px);
+					}
+
+					.fragment.blur.visible {
+						filter: none;
+					}
+				</style>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment custom blur" data-fragment-index="1">
+						<a href="https://openjdk.org/jeps/440">
+							440: Record Patterns
+						</a>
+					</li>
+					<li class="fragment custom blur">
+						<a href="https://openjdk.org/jeps/441">
+							441: Pattern Matching for switch
+						</a>
+					</li>
+					<li class="fragment custom blur">
+						<a href="https://openjdk.org/jeps/443">
+							443: Unnamed Patterns and Variables (Preview)
+						</a>
+					</li>
+					<li class="fragment custom blur">
+						<a href=https://openjdk.org/jeps/431>
+							431: Sequenced Collections
+						</a>
+					</li>
+					<li class="fragment custom blur">
+						<a href="https://openjdk.org/jeps/430">
+							430: String Templates (Preview)
+						</a>
+					</li>
+					<li class="fragment custom blur">
+						<a href="https://openjdk.org/jeps/445">
+							445: Unnamed Classes and Instance Main Methods (Preview)
+						</a>
+					</li>
+				</ul>
 
 				<aside class="notes">
 					These are the speaker notes.
 					They are only visible in a separate window after pressing the s key.
 				</aside>
-				<p>and more content!</p>
 			</section>
+
+			<!--Record Patterns selection 440-->
+			<!--Slide 3-->
 			<section>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment highlight-green">
+
+						440: Record Patterns
+
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/441">
+							441: Pattern Matching for switch
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/443">
+							443: Unnamed Patterns and Variables (Preview)
+						</a>
+					</li>
+					<li>
+						<a href=https://openjdk.org/jeps/431>
+							431: Sequenced Collections
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/430">
+							430: String Templates (Preview)
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/445">
+							445: Unnamed Classes and Instance Main Methods (Preview)
+						</a>
+					</li>
+				</ul>
+
+				<aside class="notes">
+					These are the speaker notes.
+					They are only visible in a separate window after pressing the s key.
+				</aside>
+			</section>
+
+
+
+			<!--Record Patterns selection 440 ENHANCED -->
+			<!--Slide 3-->
+			<section style="font-size: 53%; ">
+				<h3>Core language extensions and updates</h3>
+				<ul style="color : green">
+					<li>
+						<a style="color : green" href="https://openjdk.org/jeps/440">
+							440: Record Patterns
+						</a>
+						<ul>
+							<li class="fragment" style="color : green">Pattern matching and records</li>
+						</ul>
+					</li>
+
+					<pre style="width: 100%;" class="fragment java" data-id="code">
+						<code  data-line-numbers="1-5|6-7|8-10|11-16|17-19|20-22|24-27" data-trim>
+							// As of Java 16
+							record Point(int x, int y) {}
+							
+							static void printSum(Object obj) {
+								if (obj instanceof Point p) {
+									int x = p.x();
+									int y = p.y();
+									System.out.println(x+y);
+								}
+							}
+							// As of Java 21
+							static void printSum(Object obj) {
+								if (obj instanceof Point(int x, int y)) {
+									System.out.println(x+y);
+								}
+							}
+							// Requiring the full Records declaration for destructuring feels
+							// like a chore. (line 13). The components must match, or the compiler won’t be happy:
+							
+							// Error:
+							// incompatible types: pattern of type long is not applicable at int
+							// if (obj instanceof Point(long x, int y)) {
+							
+							//Instead:	
+							if (obj instanceof Point(var x, var y)) {
+								// ...
+							  }
+					</code>
+				</pre>
+
+				</ul>
+				<aside class="notes">
+
+					<p>
+						Records are a special purpose class to easily aggregate data in a shallowly immutable fashion.
+						They’re structured around components, similar to fields in a POJO or JavaBean. Their accessors,
+						the “all components” (canonical) constructor, and Object-related helper method (toString,
+						equals, hashCode) are all available with sensible implementations without requiring any
+						additional code.ß
+					</p>
+					<p> Point(int x, int y) is a rßthe pattern itself, and initializes those variables by invoking the
+						accessor methods when a value is matched against the pattern. In effect, a record pattern
+						disaggregates an instance of a record into its components. </p>
+
+					<p>Well, in a certain sense, this way of thinking is correct. Repeating the Record’s definition to
+						access its components seems tedious. But if we look further than such a simple example, the
+						potential of what Record pattern matching can do for us will reveal itself!
+						.</p>
+
+				</aside>
+			</section>
+
+			<!--Record Patterns selection 440 Nested record patterns -->
+			<!--Slide 3-->
+			<section style="font-size: 70%; ">
+				<h3>Core language extensions and updates</h3>
+				<ul style="color : green; text-align: left">
+					<li>
+						<a style="color : green;" href="https://openjdk.org/jeps/440">
+							440: Record Patterns
+						</a>
+						<ul>
+							<li class="fragment" style="color : green">Nested record patterns
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<p class="fragment" style="size:10px; text-align: left;" >Let’s design a Record representing a window frame, including its origin and size on
+					the screen:
+				</p>
+				<pre style="width: 100%;" class="fragment java" data-id="code">
+						<code  data-line-numbers="1-3|5-6|9-13|15-18" data-trim>
+							record Size(int width, int height) { }
+							record Point(int x, int y) { }
+							record WindowFrame(Point origin, Size size) { }
+
+							// To access the height component of a WindowFrame in 
+							// the nested Size component, we’d need multiple matches:
+
+
+							if (obj instanceof WindowFrame wf) {
+								if (wf.size() != null) {
+									System.out.println("Height: " + wf.size().height());
+								}
+							}
+
+							//Java 21
+							if (obj instanceof WindowFrame(Point origin, Size(int width, int height))) {
+								System.out.println("Height: " + height);
+							}
+					</code>
+				</pre>
+
+
+				<aside class="notes">
+
+					<p>
+						Deconstructing a simple Record doesn’t have much of an advantage, in my opinion, at least
+						without a feature I’m going to discuss shortly. The real power of deconstructing Records is
+						found if a Record contains another Record.
+
+
+					</p>
+					<p>
+						The difference here is that a simple WindowFrame(Point origin, Size size) matches even if Size
+						size is null. When you deconstruct Size, too, though, it only matches if size isn’t null.
+
+					</p>
+
+				</aside>
+			</section>
+
+
+			<!--Record Patterns selection 441-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment strike">
+						<a href="https://openjdk.org/jeps/440">
+							440: Record Patterns
+						</a>
+					</li>
+					<li class="fragment highlight-green">
+						441: Pattern Matching for switch
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/443">
+							443: Unnamed Patterns and Variables (Preview)
+						</a>
+					</li>
+					<li>
+						<a href=https://openjdk.org/jeps/431>
+							431: Sequenced Collections
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/430">
+							430: String Templates (Preview)
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/445">
+							445: Unnamed Classes and Instance Main Methods (Preview)
+						</a>
+					</li>
+				</ul>
+
+				<aside class="notes">
+					These are the speaker notes.
+					They are only visible in a separate window after pressing the s key.
+				</aside>
+			</section>
+
+
+			<!--441: Pattern Matching for Switch-->
+			<!--Slide 3-->
+			<section style="font-size: 56%; ">
+				<h3>Core language extensions and updates</h3>
+				<ul style="color : green">
+					<li>
+						<a class="fragment" style="color : green" href="https://openjdk.org/jeps/441">
+							441: Pattern Matching for Switch
+						</a>
+					</li>
+					<pre style="width: 100%;" class="fragment java" data-id="code">
+						<code  data-line-numbers="1-5|7-10" data-trim>
+							// BEFORE JAVA 16
+							if (obj instanceof String) {
+								String str = (String) obj;
+								System.out.println(str);
+							}
+					
+							// JAVA 16+
+							if (obj instanceof String str) {
+								System.out.println(str);
+							}
+					</code>
+				</pre>
+					<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-16|18-25"  class="java" data-trim>
+						// BEFORE JAVA 21
+						static String asStringValue (Object anyValue){
+							String result = null;
+				
+							if (anyValue instanceof String str) {
+								result = str;
+							} else if (anyValue instanceof BigDecimal bd) {
+								result = bd.toEngineeringString();
+							} else if (anyValue instance Integer i){
+								result = Integer.toString(i);
+							} else{
+								result = "n/a";
+							}
+				
+							return result;
+						}
+				
+						// JAVA 21+
+						static String asStringValue (Object anyValue){
+							return switch (anyValue) {
+								case String str -> str;
+								case BigDecimal bd -> bd.toEngineeringString();
+								case Integer i -> Integer.toString(i);
+								default -> "n/a";
+							};
+						}
+					</code></pre>
+
+				</ul>
+				<aside class="notes">
+					<p>In Java 16, JEP 394 extended the instanceof operator to take a type pattern and perform pattern
+						matching. </p>
+
+					<p>In the new code, obj matches the type pattern String s if, at run time, the value of obj is an
+						instance of String. If the pattern matches then the instanceof expression is true and the
+						pattern variable s is initialized to the value of obj cast to String, which can then be used in
+						the contained block.</p>
+
+					<p> Java 21 extended the concept to be usable in switch statements and expressions:</p>
+				</aside>
+			</section>
+
+			<!--441: Pattern Matching for Switch | Switches and null-->
+			<!--Slide 3-->
+			<section style="font-size: 85%; ">
+				<h3>Core language extensions and updates</h3>
+				<ul style="color : green">
+					<li>
+						<a style="color : green" href="https://openjdk.org/jeps/440">
+							441: Pattern Matching for Switch
+						</a>
+						<ul>
+							<li class="fragment" style="color: white;">
+								Switches and null
+							</li>
+						</ul>
+					</li>
+					<pre style="width: 100%;" class="fragment java" data-id="code">
+						<code  data-line-numbers="1-6|7-11" data-trim>
+							// Prior to Java 21
+							static void testFooBarOld (String s){
+								if (s == null) {
+									System.out.println("Oops!");
+									return;
+								}
+								switch (s) {
+									case "Foo", "Bar" -> System.out.println("Great");
+									default -> System.out.println("Ok");
+								}
+							}
+					
+					</code>
+				</pre>
+					<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-8"  class="java" data-trim>
+						// As of Java 21
+						static void testFooBarNew(String s) {
+							switch (s) {
+								case null         -> System.out.println("Oops");
+								case "Foo", "Bar" -> System.out.println("Great");
+								default           -> System.out.println("Ok");
+							}
+						}
+					</code></pre>
+
+				</ul>
+				<aside class="notes">
+					<p>Traditionally, switch statements and expressions throw NullPointerException if the selector
+						expression evaluates to null, so testing for null must be done outside of the switch:</p>
+
+					<p>This was reasonable when switch supported only a few reference types. However, if switch allows a
+						selector expression of any reference type, and case labels can have type patterns, then the
+						standalone null test feels like an arbitrary distinction which invites needless boilerplate and
+						opportunities for error. It would be better to integrate the null test into the switch by
+						allowing a new null case label:</p>
+
+				</aside>
+			</section>
+
+			<!--443 Record Unnamed Patterns and Variables-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment strike highlight-red">
+						440: Record Patterns
+					</li>
+					<li class="fragment strike highlight-red">
+						441: Pattern Matching for switch
+					</li>
+					<li class="fragment highlight-green">
+						443: Unnamed Patterns and Variables (Preview)
+					</li>
+					<li>
+						<a href=https://openjdk.org/jeps/431>
+							431: Sequenced Collections
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/430">
+							430: String Templates (Preview)
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/445">
+							445: Unnamed Classes and Instance Main Methods (Preview)
+						</a>
+					</li>
+				</ul>
+
+				<aside class="notes">
+					These are the speaker notes.
+					They are only visible in a separate window after pressing the s key.
+				</aside>
+			</section>
+
+
+			<!--443: Unnamed Patterns and Variables (Preview)-->
+			<!--Slide 3-->
+			<section style="font-size: 85%; ">
+				<h3>Core language extensions and updates</h3>
+				<ul style="color : green">
+					<li>
+						<a style="color : green" href="https://openjdk.org/jeps/440">
+							Unnamed Patterns and Variables (Preview)
+						</a>
+						<ul>
+							<li>
+								Unused variables
+							</li>
+						</ul>
+					</li>
+					<pre style="width: 100%;" class="fragment java" data-id="code">
+						<code  data-line-numbers="3-6|9-11" data-trim>
+							try {
+								//...
+							  } catch (Exception _) {
+								// we don't need the actual exception
+							  }
+							  
+							  int acc = 0;
+							  for (Order _ : orders) {
+								  if (acc < LIMIT) { 
+									// the actual order is not used
+								  }
+							  }
+					
+					</code>
+				</pre>
+				<pre class="fragment" style="color: white;">Also:</pre>	
+
+					<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-4"  class="java" data-trim>
+						// As of Java 21
+						if (obj instanceof WindowFrame(_, Size(_, int height))) {
+							System.out.println("Height: " + height);
+						}
+					</code></pre>
+
+				</ul>
+				<aside class="notes">
+					<p>Another upcoming feature only available as a preview in Java 21 is JEP 443: Unnamed Patterns and
+						Variables.
+					</p>
+
+					<p>This feature improves readability throughout our code by allowing us to replace an unused
+						variable with _ (underscore). No more @SuppressWarnings("unused") needed to shut up all those
+						pesky warnings!
+					</p>
+
+					<p>Nameless variables are quite useful in many scenarios, like the Exception variable in a catch
+						block or side-effect-only constructs:
+					</p>
+					<p>
+						Regarding Record pattern matching, this JEP simplifies (nested) calls as much as possible:
+					</p>
+				</aside>
+			</section>
+
+
+			<!--Performance improvements-->
+			<section>
+
+				<h3>Performance and infrastructure improvements</h3>
+				<ul>
+					<li class="fragment fade"><a href="#439-generational-zgchttpsopenjdkorgjeps439">439: Generational
+							ZGC</a></li>
+					<li class="fragment fade"><a href="#448-vector-api-6th-incubatorhttpsopenjdkorgjeps448">448: Vector
+							API (6th
+							incubator)</a></li>
+					<li class="fragment fade"><a
+							href="#442-foreign-function--memory-api-3rd-previewhttpsopenjdkorgjeps442">442: Foreign
+							Function &amp; Memory API (Third Preview)</a></li>
+				</ul>
+
+				<aside class="notes">
+					These are the speaker notes.
+					They are only visible in a separate window after pressing the s key.
+				</aside>
+			</section>
+
+
+			<!--Extensions to Multi-threaded code-->
+			<!--Slide 4-->
+
+			<section data-auto-animate>
+				<h3>Extensions to multi-threaded code</h3>
+				<aside class="notes">
+					These are the speaker notes.
+					They are only visible in a separate window after pressing the s key.
+				</aside>
+			</section>
+
+			<!--Virtual Threads-->
+			<!--Slide 5-->
+
+			<section data-auto-animate>
+				<h3>Extensions to multi-threaded code</h3>
+				<ul>
+					<li><a href="#444-virtual-threadshttpsopenjdkorgjeps444">444: Virtual Threads</a></li>
+				</ul>
+			</section>
+
+			<!--446: Scoped Values-->
+			<!--Slide 6-->
+			<section data-auto-animate>
+				<h3>Extensions to multi-threaded code</h3>
+				<ul>
+					<li><a href="#444-virtual-threadshttpsopenjdkorgjeps444">444: Virtual Threads</a></li>
+					<li><a href="#446-scoped-values-previewhttpsopenjdkorgjeps446">446: Scoped Values (Preview)</a></li>
+				</ul>
+			</section>
+
+			<!--453: Structured Concurrency-->
+			<!--Slide 7-->
+			<section data-auto-animate>
+				<h3>Extensions to multi-threaded code</h3>
+
+				<ul>
+					<li><a href="#444-virtual-threadshttpsopenjdkorgjeps444">444: Virtual Threads</a></li>
+					<li><a href="#446-scoped-values-previewhttpsopenjdkorgjeps446">446: Scoped Values (Preview)</a></li>
+					<li><a href="#453-structured-concurrency-previewhttpsopenjdkorgjeps453">453: Structured Concurrency
+							(Preview)</a></li>
+				</ul>
+			</section>
+
+
+			<!---->
+			<section style="font-size: 30px; margin:0px">
+				<p>some gtexts</p>
 				<pre data-id="code"><code data-line-numbers class="java" data-trim>
 					private int[] findSubArray(int[] array, int targetSum) {
 						int sum = 0;
@@ -54,7 +607,9 @@
 					
 				</code></pre>
 			</section>
+			<section>
 
+			</section>
 
 
 		</div>
