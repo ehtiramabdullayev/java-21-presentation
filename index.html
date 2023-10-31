@@ -114,8 +114,10 @@
 				</ul>
 
 				<aside class="notes">
-					These are the speaker notes.
-					They are only visible in a separate window after pressing the s key.
+					You can use a record pattern to test whether a value is an instance of a record class type (see
+					Record Classes) and, if it is, to recursively perform pattern matching on its component values. The
+					following example tests whether obj is an instance of the Point record with the record pattern
+					Point(double x, double y);
 				</aside>
 			</section>
 
@@ -171,11 +173,15 @@
 				<aside class="notes">
 
 					<p>
-						Records are a special purpose class to easily aggregate data in a shallowly immutable fashion.
-						They’re structured around components, similar to fields in a POJO or JavaBean. Their accessors,
-						the “all components” (canonical) constructor, and Object-related helper method (toString,
-						equals, hashCode) are all available with sensible implementations without requiring any
-						additional code.ß
+						You can use a record pattern to test whether a value is an instance of a record class type (see
+						Record Classes) and, if it is, to recursively perform pattern matching on its component values.
+						The following example tests whether obj is an instance of the Point record with the record
+						pattern Point(double x, double y):
+					</p>
+
+					<p>A record pattern consists of a type and a (possibly empty) record component pattern list. In this
+						example, the type is Point and the component pattern list is (double x, double y).
+
 					</p>
 					<p> Point(int x, int y) is a rßthe pattern itself, and initializes those variables by invoking the
 						accessor methods when a value is matched against the pattern. In effect, a record pattern
@@ -204,7 +210,8 @@
 						</ul>
 					</li>
 				</ul>
-				<p class="fragment" style="size:10px; text-align: left;" >Let’s design a Record representing a window frame, including its origin and size on
+				<p class="fragment" style="size:10px; text-align: left;">Let’s design a Record representing a window
+					frame, including its origin and size on
 					the screen:
 				</p>
 				<pre style="width: 100%;" class="fragment java" data-id="code">
@@ -485,7 +492,7 @@
 					
 					</code>
 				</pre>
-				<pre class="fragment" style="color: white;">Also:</pre>	
+					<pre class="fragment" style="color: white;">Also:</pre>
 
 					<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-4"  class="java" data-trim>
 						// As of Java 21
@@ -515,6 +522,666 @@
 			</section>
 
 
+			<!--431 Sequenced Collections-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment strike highlight-red">
+						440: Record Patterns
+					</li>
+					<li class="fragment strike highlight-red">
+						441: Pattern Matching for switch
+					</li>
+					<li class="fragment strike highlight-red">
+						443: Unnamed Patterns and Variables (Preview)
+					</li>
+					<li class="fragment highlight-green">
+						431: Sequenced Collections
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/430">
+							430: String Templates (Preview)
+						</a>
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/445">
+							445: Unnamed Classes and Instance Main Methods (Preview)
+						</a>
+					</li>
+				</ul>
+
+				<aside class="notes">
+					<p>
+						Dealing with Collections is improving with Java 21, as three new interfaces get retro-fitted
+						right
+						into the existing type hierarchies. These Sequenced Collections give us a uniform API to access
+						the
+						first and last elements, and process Collections in reverse.ß
+						Dealing with Collections is improving with Java 21, as three new interfaces get retro-fitted
+						right
+						into the existing type hierarchies. These Sequenced Collections give us a uniform API to access
+						the
+						first and last elements, and process Collections in reverse.
+					</p>
+				</aside>
+			</section>
+
+
+			<!--431 Sequenced Collections | hierarchy-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<h4>Sequenced collections</h4>
+				<img class="fragment" src="images/seq-col.png">
+
+				<aside class="notes">
+					<p>
+						The three new sequenced interfaces are:
+						<br />
+						SequencedCollection<E> extends Collection<E>
+								</br>
+								SequencedSet<E> extends SequencedCollection<E>, Set<E>
+											</br>
+											SequencedMap<K, V> extends Map<K, V>
+
+					</p>
+				</aside>
+			</section>
+
+			<!--431 Sequenced Collections | Front to Back, Back to Front-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<h4>Sequenced collections</h4>
+				<p class="fragment" style="text-align: left; font-size: 50%">It's common task with Collections is
+					getting the first or
+					last
+					element
+				</p>
+
+
+
+				<pre style="width: 100%;" class="fragment java" data-id="code">
+					<code  data-line-numbers="1-3" data-trim>
+						List items = ...;
+						String first = items.get(0);
+						String last = items.get(items.size() - 1)
+					 
+				</code>
+			</pre>
+
+				<p class="fragment" style="text-align: left; font-size: 50%">
+					And it's NOT pretty
+				</p>
+
+				<p class="fragment" style="text-align: left; font-size: 50%">
+					Collection types supporting accessing the first and last element directly
+				</p>
+
+
+				<table class="fragment" style="font-size: 50%; text-align: left;">
+					<thead>
+						<tr>
+							<th>Collection Type</th>
+							<th>First Element</th>
+							<th>Last Element</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><code>List</code></td>
+							<td><code>list.get(0)</code></td>
+							<td><code>list.get(list.size() - 1)</code></td>
+						</tr>
+						<tr>
+							<td><code>Deque</code></td>
+							<td><code>deque.getFirst()</code></td>
+							<td><code>deque.getLast()</code></td>
+						</tr>
+						<tr>
+							<td><code>SortedSet</code></td>
+							<td><code>sortedSet.first()</code></td>
+							<td><code>sortedSet.last()</code></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<p class="fragment" style="text-align: left; font-size: 50%">
+					For the inverse direction?
+				</p>
+
+
+
+				<aside class="notes">
+					<p>
+						Collection types supporting accessing the first and last element directly, but there’s no shared
+						interface
+						with a common API (yet):
+					</p>
+					<p>
+						Every Collection-based type is easily traversable front to back, as it’s a descendant of
+						Iterator. This way, we can use for-each loops, Stream pipelines, and create arrays from any
+						collection by calling toArray(). For the inverse direction, back to front, there’s no easy way
+						or trick available. That means, for example, that if we have to deal with a LinkedHashSet, we
+						have to traverse the whole collection to get to the last element.
+
+						Until Java 21 and Sequenced Collections!
+					</p>
+				</aside>
+			</section>
+
+
+			<!--431 Sequenced Collections | Sequenced set and collection -->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<h4>Sequenced collections</h4>
+
+				<pre style="width: 100%;" class="fragment java" data-id="code">
+					<code  data-line-numbers="2-3|5-7|9-13" data-trim>
+						interface SequencedCollection extends Collection {
+							// NEW METHOD
+							SequencedCollection reversed();
+			
+							// PROMOTED METHODS FROM Deque
+							void addFirst(E);
+							void addLast(E);
+						
+							E getFirst();
+							E getLast();
+						
+							E removeFirst();
+							E removeLast();
+						}
+					 
+				</code>
+			</pre>
+
+				<pre style="width: 100%; height: 2100%;" class="fragment java fade" data-id="code">
+				<code  data-line-numbers="1-3" data-trim>
+					interface SequencedSet extends Set, SequencedCollection {
+						SequencedSet reversed();    // covariant override
+					}
+				 
+			</code>
+		</pre>
+				<aside class="notes">
+					<p>
+						A SequencedCollection has first and last elements with the elements between them having
+						successors and predecessors. A SequencedCollection supports common operations at either end, and
+						it supports processing the elements from first to last and from last to first (such as, forward
+						and reverse).
+
+						The reversed() method provides a reverse-ordered view of the original collection. Any
+						modifications to the original collection are visible in the view.
+
+
+					</p>
+					<p>
+						The add*(E) and remove*() methods are optional, primarily to support the case of unmodifiable
+						collections. The get*() and remove*() methods throw a NoSuchElementException if the collection
+						is empty. There are no definitions of equals() and hashCode() in SequencedCollection because its
+						subinterfaces have conflicting definitions. </p>
+					<p>
+						A SequencedSet is both a SequencedCollection and a Set.
+
+						A SequencedSet can be thought of either as a Set that also has a well-defined encounter order,
+						or as a SequencedCollection that also has unique elements.
+
+						This interface has the same requirements on the equals and hashCode methods as defined by
+						Set.equals and Set.hashCode. A Set and a SequencedSet compare equals if and only if they have
+						equal elements, irrespective of ordering.
+
+						SequencedSet defines the reversed() method, which provides a reverse-ordered view of this set.
+						The only difference from the SequencedCollection.reversed method is that the return type of
+						SequencedSet.reversed is SequencedSet.
+					</p>
+				</aside>
+			</section>
+
+			<!--431 Sequenced Collections | Sequenced Map-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<h4>Sequenced collections</h4>
+
+				<pre style="width: 100%;" class="fragment java" data-id="code">
+					<code  data-line-numbers="2|3-5|6-7|8-13" data-trim>
+						interface SequencedMap&lt;K,V&gt; extends Map&lt;K,V&gt;  {
+							SequencedMap&lt;K,V&gt; reversed();
+							SequencedSet&lt;K&gt; sequencedKeySet();
+							SequencedCollection&lt;V&gt;sequencedValues();
+							SequencedSet&lt;&lt;K,V&gt;&gt; sequencedEntrySet();
+							V putFirst(K, V);
+							V putLast(K, V);
+							// methods promoted from NavigableMap
+							Entry&lt;K,V&gt;firstEntry();
+							Entry&lt;K,V&gt;lastEntry();
+							Entry&lt;K,V&gt;pollFirstEntry();
+							Entry&lt;K,V&gt; pollLastEntry();
+						}
+					 
+				</code>
+			</pre>
+
+				<aside class="notes">
+					<p>A SequencedMap provides methods to add mappings, to retrieve mappings, and to remove mappings at
+						either end of the map's encounter order. This interface also defines the reversed() method,
+						which
+						provides a reverse-ordered view of this map.
+					</p>
+
+					<p>A SequencedMap has a well-defined encounter order that supports operations at both ends and is
+						reversible. A map's reverse-ordered view is generally not serializable, even if the original map
+						is
+						serializable. The encounter order of a SequencedMap is similar to that of the elements of a
+						SequencedCollection, but the ordering applies to mappings instead of individual elements:
+					</p>
+					<p>The sequencedKeySet(), sequencedValues(), and sequencedEntrySet()methods are exactly analogous to
+						the keySet(), values(), and entrySet() methods of Map interface. All of these methods return
+						views
+						of the underlying collection; where modifications to the view are visible in the underlying
+						collection and vice versa. The encounter order of these views exactly corresponds to the
+						encounter
+						order of the underlying map.
+					</p>
+
+				</aside>
+			</section>
+
+
+			<!--431 String Templates-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment strike highlight-red">
+						440: Record Patterns
+					</li>
+					<li class="fragment strike highlight-red">
+						441: Pattern Matching for switch
+					</li>
+					<li class="fragment strike highlight-red">
+						443: Unnamed Patterns and Variables (Preview)
+					</li>
+					<li class="fragment strike highlight-red">
+						431: Sequenced Collections
+					</li>
+					<li class="fragment  highlight-green">
+						430: String Templates (Preview)
+
+					</li>
+					<li>
+						<a href="https://openjdk.org/jeps/445">
+							445: Unnamed Classes and Instance Main Methods (Preview)
+						</a>
+					</li>
+				</ul>
+
+				<aside class="notes">
+					<p>
+						String templates are a preview feature in JDK 21 and complement the string literals and text
+						blocks that already exist in Java. To produce specialized results, string templates mix literal
+						text (string literals or text blocks) with embedded expressions that are handled by template
+						processors.
+
+						The new language feature and API make it easier to create non-string values that are computed at
+						runtime using literal text and embedded expressions.
+					</p>
+				</aside>
+			</section>
+
+
+			<!--431: String Templates examples -->
+			<!--Slide 3-->
+			<section style="font-size: 85%; ">
+				<h3>Core language extensions and updates</h3>
+				<h4>String templates</h4>
+
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					Mechanisms and types that work with String
+					literals and instances built right into the language/JDK to that:
+
+				</p>
+
+
+				<ul class="fragment" style="text-align: left; font-size: 70%; text-align: left;">
+					<li>The <code>+</code> (plus) operator</li>
+					<li><code>StringBuffer</code> and <code>StringBuilder</code></li>
+					<li><code>String::format</code> and <code>String::formatted</code></li>
+					<li><code>java.text.MessageFormat</code></li>
+				</ul>
+
+
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1|2|3|4|5|6|7-8"  class="java" data-trim>
+					// As of Java 21
+					//The create a template expression, we need two things:
+					//A template processor
+					//A template containing wrapped expressions like \{name}
+					var name = "Ben";
+					var tempC = 28;
+			
+					var greeting = STR."Hello \{this.user.firstname()}, how are you?\nIt's \{tempC}°C today!";
+			
+					</code></pre>
+
+				</ul>
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					The first question you might have is: where does STR come from?
+				</p>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">As String -> String templates are most
+					likely the default use case for String templates, the template
+					processor STR is automagically imported into every Java source file. So all the inconvenience added
+					by
+					Java’s approach is 4 additional characters.
+				</p>
+
+				<aside class="notes">
+					<p>The new way to work with Strings in Java is called template expression, a programmable way of
+						safely interpolating expressions in String literals. And even better than just interpolating, we
+						can turn structured text into any object, not just a String.
+
+					</p>
+				</aside>
+			</section>
+
+			<!--431: String Templates multiline templates -->
+			<!--Slide 3-->
+			<section style="font-size: 85%; ">
+				<h3>Core language extensions and updates</h3>
+				<h4>String templates</h4>
+
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					Multi-Line Templates and Expressions
+				</p>
+
+				<pre style="width: 100%;font-size: 40%;" class="fragment" data-id="code"><code data-line-numbers="1-12|13|14-22"  class="java" data-trim>
+					// As of Java 21
+
+					String customerName    = "Java Duke";
+					String phone           = "555-123-4567";
+					String address         = "1 Maple Drive, Anytown";
+					String json = STR."""
+					{
+						"name":    "\{customerName}",
+						"phone":   "\{phone}",
+						"address": "\{address}"
+					}
+					""";
+					// Not only the template itself can be multi-line, expressions can be too, including comments!
+					var json = STR."""
+					{
+					  "user": "\{
+						// We only want to use the firstname
+						this.user.firstname()
+					  }",
+					  "temperatureCelsius: \{tempC}
+					}
+					""";
+			
+					</code></pre>
+
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-3|4|5"  class="java" data-trim>
+						//Embedded expressions can perform arithmetic operations.
+						double x = 10.5, y = 20.6;
+						String p = STR."\{x} * \{y} = \{x * y}";
+						System.out.println(p);
+						// Output: 10.5 * 20.6 = 216.3
+						</code></pre>
+
+
+				<aside class="notes">
+					<p>The template processor STR is one of the template processors that's included in the JDK. It
+						automatically performs string interpolation by replacing each embedded expression in the
+						template with its value, converted to a string. The JDK includes two other template processors:
+					</p>
+					<p>
+						The FMT Template Processor: It's like the STR template processor except that it accepts format
+						specifiers as defined in java.util.Formatter and locale information in a similar way as in
+						printf method invocations.
+					</p>
+					<p>
+						The RAW Template Processor: It doesn't automatically process the string template like the STR
+						template processors. You can use it to help you create your own template processors. Note that
+						you can also implement the StringTemplate.Processor interface to create a template processor.
+						See Creating a Template Processor.
+					</p>
+					<p>
+						The main advantage of Java’s implementation over other languages in my opinion is the
+						possibility of using another template processor than a String -> String one. Look at the JSON
+						example, again. You can write your own processor and return JSONObject instead of String
+					</p>
+				</aside>
+			</section>
+
+			<!--445  Unnamed Classes-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment strike highlight-red">
+						440: Record Patterns
+					</li>
+					<li class="fragment strike highlight-red">
+						441: Pattern Matching for switch
+					</li>
+					<li class="fragment strike highlight-red">
+						443: Unnamed Patterns and Variables (Preview)
+					</li>
+					<li class="fragment strike highlight-red">
+						431: Sequenced Collections
+					</li>
+					<li class="fragment strike highlight-red">
+						430: String Templates (Preview)
+
+					</li>
+					<li class="fragment highlight-green">
+						445: Unnamed Classes and Instance Main Methods (Preview)
+					</li>
+				</ul>
+
+				<aside class="notes">
+					<p>
+						Even though Java is an excellent language for complex, large, enterprise-grade multi-developer
+						applications, it’s still intended to be a first programming language, too. That’s why the
+						initial hurdles should be as low as possible.
+
+						Let’s take a look at how to write your first Java program.
+
+
+					</p>
+				</aside>
+			</section>
+
+			<!--431:  Unnamed Classes Simpler Main Methods-->
+			<!--Slide 3-->
+			<section style="font-size: 85%; ">
+				<h3>Core language extensions and updates</h3>
+				<h4>Simpler Main Methods </h4>
+
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					Let’s take a look at how to write your first Java program.
+				</p>
+
+
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1|2|3|4|5|6|7-8"  class="java" data-trim>
+					package com.beliefdrivendesign;
+
+					public class MyAwesomeApp {
+					
+					  public static void main(String... args) {
+						// Awesome code goes here
+					  }
+					}
+					</code></pre>
+
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					Less is More
+				</p>
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-6"  class="java" data-trim>
+					class MyAwesomeApp {
+
+						void main() {
+						  // Awesome code goes here
+						}
+					  }
+					</code></pre>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					This means we can write more than main() method in a class. The Java compiler will search the main()
+					method in the following sequence. Whatever the JVM finds the first main() method in the sequence, it
+					will use it to launch the program:
+
+				</p>
+
+				<ul class="fragment" style="font-size: 50%;">
+					<li>A <code>static void main(String[] args)</code> method</li>
+					<li>A <code>static void main()</code> method without any arguments</li>
+					<li>A <code>void main(String[] args)</code> instance method without <code>static</code> keyword</li>
+					<li>A <code>void main()</code> instance method without <code>static</code> keyword and arguments
+					</li>
+				</ul>
+
+				<aside class="notes">
+					<p>A package declaration, which might be there, maybe not.
+					</p>
+					<p>The class declaration uses a mandatory visibility modifier (public) that doesn’t make sense for
+						our first program. And if you name the file containing it not the same as the class, it won’t
+						compile.
+					</p>
+					<p>
+						Next, there’s a method aptly named main, so it’s the actual entry point. However, it uses a
+						visibility modifier (public), too, but adds in a lifetime/access modifier (static) for good
+						measure. To make it even more complicated, let’s introduce var-args (String...) or an array
+						(String[]) right in your first program.
+					</p>
+					<p>Note that, in all above cases, the method must be non-private i.e. it must have access modifier
+						either public, protected or package.
+
+						For example, in the following program, we have created two main methods.</p>
+				</aside>
+			</section>
+
+			<!--431:  Unnamed Classes Simpler Main part 2-->
+			<!--Slide 3-->
+			<section style="font-size: 85%; ">
+				<h3>Core language extensions and updates</h3>
+				<h4>Simpler Main Methods </h4>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					For example, in the following program, we have created two main methods.
+				</p>
+
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-8"  class="java" data-trim>
+					//An Unnamed Class with Two main() Methods
+					void main(String[] args) {
+					  System.out.println("Main method with args");
+					}
+					
+					void main() {
+					  System.out.println("Main method without args");
+					}
+					</code></pre>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					In the sequence, the void main(String[] args) comes before the void main(), so the program output
+					will be:
+				</p>
+
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-6"  class="java" data-trim>
+					Main method with args
+
+					</code></pre>
+
+				<aside class="notes">
+					<p>
+						Note that the above instance main() methods can be written with normal classes also. The
+						following Java program is a valid program and it will execute the main() method.
+					</p>
+				</aside>
+			</section>
+
+			<!--431:  Unnamed Classes  Rules to Create and Use an Unnamed Class-->
+			<!--Slide 3-->
+			<section style="font-size: 85%; ">
+				<h3>Core language extensions and updates</h3>
+				<h4> Rules to Create and Use an Unnamed Class</h4>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					There are certain rules to abide by to create the unnamed classes correctly. Let us check them out.
+				</p>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					As the class has no name, we can’t reference or instantiate it any way ourselves. It resides in the
+					unnamed package in the unnamed module. Besides that, it behaves almost like a “normal” class
+					declaration. We can’t use certain features, though, like implementing an interface, extending
+					another type, referencing the class by name, generating documentation with javadoc, etc.
+
+
+				</p>
+
+
+
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-8"  class="java" data-trim>
+					void main() {
+						// Awesome code goes here
+					  }
+					</code></pre>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+
+					This is preview language feature, disabled by default
+				</p>
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					Should I use a Preview Feature?
+				</p>
+
+
+				<pre style="width: 100%;" class="fragment" data-id="code"><code data-line-numbers="1-6"  class="java" data-trim>
+					# COMPILE
+					javac --release 21 --enable-preview MyAwesomeApp.java
+					
+					# RUN
+					java --enable-preview MyAwesomeApp
+					</code></pre>
+
+				<aside class="notes">
+
+					<p>
+						An unnamed class is always a member of the unnamed package. It is also final and cannot
+						implement any interface nor extend any class other than Object. An unnamed class cannot be
+						referenced by name, so there can be no method references to its static methods; the this keyword
+						can still be used, however, and so can method references to instance methods.
+
+					</p>
+					<p>
+						An unnamed class resides in the unnamed package, and the unnamed package resides in the unnamed
+						module. While there can be only one unnamed package (barring multiple class loaders) and only
+						one unnamed module, there can be multiple unnamed classes in the unnamed module. Every unnamed
+						class contains a main method and so represents a program, thus multiple such classes in the
+						unnamed package represent multiple programs.
+
+
+					</p>
+					<p>
+						The way Java projects are structured is simple: every class is in a package and every package is
+						in a module. This method of namespacing and compartmentalizing your code is prevalent in many
+						programming languages and a necessity for any program consisting of more than a few classes.
+						However, just like public static void main(String... args) method in the previous section, it’s
+						another hurdle for simple, one-class programs.
+
+					</p>
+				</aside>
+			</section>
+
+
+
 			<!--Performance improvements-->
 			<section>
 
@@ -531,8 +1198,8 @@
 				</ul>
 
 				<aside class="notes">
-					These are the speaker notes.
-					They are only visible in a separate window after pressing the s key.
+
+
 				</aside>
 			</section>
 
