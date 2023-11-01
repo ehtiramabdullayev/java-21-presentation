@@ -1139,7 +1139,7 @@
 					This is preview language feature, disabled by default
 				</p>
 				<p class="fragment" style="text-align: left; font-size: 70%">
-					Should I use a Preview Feature?
+					Do you want to use this Preview Feature?
 				</p>
 
 
@@ -1181,6 +1181,39 @@
 			</section>
 
 
+			<!--445  Core Concepts finished-->
+			<!--Slide 3-->
+			<section>
+				<h3>Core language extensions and updates</h3>
+				<ul>
+					<li class="fragment strike highlight-red">
+						440: Record Patterns
+					</li>
+					<li class="fragment strike highlight-red">
+						441: Pattern Matching for switch
+					</li>
+					<li class="fragment strike highlight-red">
+						443: Unnamed Patterns and Variables (Preview)
+					</li>
+					<li class="fragment strike highlight-red">
+						431: Sequenced Collections
+					</li>
+					<li class="fragment strike highlight-red">
+						430: String Templates (Preview)
+
+					</li>
+					<li class="fragment strike highlight-red">
+						445: Unnamed Classes and Instance Main Methods (Preview)
+					</li>
+				</ul>
+
+				<aside class="notes">
+					<p>
+						So we covered basic core functionalities, let's go to performancw and infrascructure
+						improvements
+					</p>
+				</aside>
+			</section>
 
 			<!--Performance improvements-->
 			<section>
@@ -1189,64 +1222,435 @@
 				<ul>
 					<li class="fragment fade"><a href="#439-generational-zgchttpsopenjdkorgjeps439">439: Generational
 							ZGC</a></li>
-					<li class="fragment fade"><a href="#448-vector-api-6th-incubatorhttpsopenjdkorgjeps448">448: Vector
-							API (6th
-							incubator)</a></li>
 					<li class="fragment fade"><a
 							href="#442-foreign-function--memory-api-3rd-previewhttpsopenjdkorgjeps442">442: Foreign
 							Function &amp; Memory API (Third Preview)</a></li>
 				</ul>
 
 				<aside class="notes">
+					The Z Garbage Collector, often shortened to ZGC, received a significant update in JDK 21. ZGC is now
+					a multi-generational garbage collector, typically called Generational ZGC or GenZGC. Let’s take a
+					look at this update to ZGC!
+				</aside>
+			</section>
+
+			<!--Generational ZGC-->
+			<section>
+				<h3>Performance and infrastructure improvements</h3>
+				<h4>Generational ZGC</h4>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					The following advantages of generational ZGC add up to a more productive environment for Java
+					applications:
+
+				</p>
+				<ul class="fragment" style="text-align: left; font-size: 65%">
+					<li value="1"><b><strong>Less Interruptions</strong></b><span>: Your program will run much more
+							continuously thanks to these improved memory management strategies. </span></li>
+					<li value="2"><b><strong>Effective Memory Use</strong></b><span>: Generational ZGC reduces memory
+							use, freeing up RAM for additional crucial tasks. </span></li>
+					<li value="3"><b><strong>Reduced CPU Burden</strong></b><span>: Generational ZGC lightens the load
+							on your computer’s central processing unit (CPU).</span></li>
+				</ul>
+				<p class="fragment" style="text-align: left; font-size: 55%">
+					However, there are certain disadvantages to Generational ZGC as well, such as:
+				</p>
+				<ul class="fragment" style="text-align: left; font-size: 65%">
+					<li value="1"><b><strong>Added complexity</strong></b><span>: Compared to non-generational ZGC,
+							generational ZGC is a more complicated garbage collector. This may make problem-solving and
+							debugging more challenging.</span></li>
+					<li value="2"><b><strong>Impact on performance for specific workloads</strong></b><span>: Not every
+							workload is a good fit for generational ZGC. Applications that often allocate and deallocate
+							objects, for instance, could see a decrease in performance while using Generational
+							ZGC.</span></li>
+				</ul>
+
+				<aside class="notes">
+
+					<p>(READ THESE FIRST)
+						When ZGC was initially released, it was a single-generation garbage collector. Starting with JDK
+						21, and in addition to single-generation, multi-generation support is now also available in ZGC.
+						To use GenZGC requires passing two VM arguments:
+
+						ZGC does the majority of its work while application threads are running, pausing those threads
+						only briefly. ZGC's pause times are consistently measured in microseconds; by contrast the pause
+						times of the default garbage collector, G1, range from milliseconds to seconds. ZGC's low pause
+						times are independent of heap size: Workloads can use heap sizes from a few hundred megabytes
+						all the way up to multiple terabytes and still enjoy low pause times.
+
+						For many workloads, simply using ZGC is enough to solve all latency problems related to garbage
+						collection. This works well as long as there are sufficient resources (i.e., memory and CPU)
+						available to ensure that ZGC can reclaim memory faster than the concurrently-running application
+						threads consume it. However, the problem is ZGC currently stores all objects together,
+						regardless of age, so it
+						must collect all objects every time it runs.
+					</p>
+					<p>
+						young objects tend to die young, while old objects tend to stick around. Thus collecting young
+						objects requires fewer resources and produces more memory, while collecting old objects requires
+						more resources and priduces less memory. We can thus improve the performance of applications
+						that
+						use ZGC by collecting young objects more frequently.
+					</p>
+					<p>
+						Generational ZGC recognizes that not every object in a Java application ages at the same time.
+						The
+						heap is divided into two logical generations by the new generational ZGC: the old generation
+						consists of objects that have been allocated recently and the young generation of objects that
+						have
+						been around for a long time. In order to allow ZGC to concentrate on gathering the lucrative
+						young
+						objects, each generation is collected separately from the others.
+					</p>
 
 
+				</aside>
+			</section>
+
+			<!--442: Foreign Function & Memory API-->
+			<section>
+
+				<h3>Performance and infrastructure improvements</h3>
+				<ul>
+					<li class="fragment strike highlight-red">439: Generational
+						ZGC</li>
+					<li class="fragment highlight-green">442: Foreign
+						Function &amp; Memory API (Third Preview)
+					</li>
+				</ul>
+
+				<aside class="notes">
+					The Z Garbage Collector, often shortened to ZGC, received a significant update in JDK 21. ZGC is now
+					a multi-generational garbage collector, typically called Generational ZGC or GenZGC. Let’s take a
+					look at this update to ZGC!
+				</aside>
+			</section>
+
+			<!--442: Foreign Function & Memory API extended-->
+			<section>
+				<h3>Performance and infrastructure improvements</h3>
+				<h4>442: Foreign Function & Memory API (Third Preview) </h4>
+
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					The Foreign Function & Memory API was first previewed in JDK 19, then in JDK 20
+				</p>
+				<p class="fragment" style="text-align: left; font-size: 70%">
+					The Foreign Function & Memory API enables Java applications to call native libraries and process
+					native data by invoking foreign functions and safely accessing foreign memory (e.g. outside JVM).
+					I am looking forward to the first non-preview version of this feature in future Java releases!
+					It's still preview and targeted for JDK 22
+
+				</p>
+
+
+				<aside class="notes">
+
+					<p>(READ THESE FIRST)
+						This new API improves the the ability to exchange and make use of informationof Java programs
+						with code and data outside the Java
+						runtime without relying on the Java Native Interface (JNI). As you remember the log4j scandal
+						happened. It aims to replace JNI altogether
+						with a solution that’s easier to use, safer, and offers higher performance while providing
+						generality by enabling apps to operate on different kinds of foreign memory.
+					</p>
+
+					<p>
+						The API is expected to revolutionize how Java interacts with native libraries, and it aligns
+						with the broader Java roadmap that aims to make the platform safer and more efficient
+						out-of-the-box. For developers working with Java and native libraries, this is an exciting
+						development that promises to simplify complexities while ensuring safer and more efficient code.
+
+
+					</p>
 				</aside>
 			</section>
 
 
 			<!--Extensions to Multi-threaded code-->
 			<!--Slide 4-->
-
-			<section data-auto-animate>
+			<section>
 				<h3>Extensions to multi-threaded code</h3>
+				<ul>
+					<li class="fragment">444: Virtual Threads</li>
+					<li class="fragment">446: Scoped Values (Preview)</li>
+					<li class="fragment">453: Structured Concurrency (Preview)</li>
+				</ul>
 				<aside class="notes">
 					These are the speaker notes.
 					They are only visible in a separate window after pressing the s key.
 				</aside>
 			</section>
 
-			<!--Virtual Threads-->
+			<!--Extensions to Multi-threaded code highlist virtual threads-->
+			<!--Slide 4-->
+			<section>
+				<h3>Extensions to multi-threaded code</h3>
+				<ul>
+					<li class="fragment highlight-green">444: Virtual Threads</a></li>
+					<li class="">446: Scoped Values (Preview)</li>
+					<li class="">453: Structured Concurrency (Preview)</li>
+				</ul>
+				<aside class="notes">
+					<p>A preview feature in JDKs 19 and 20, virtual threads have now been finalized and made it into JDK
+						21 as a new feature.
+
+
+					</p>
+
+				</aside>
+			</section>
+
+			<!--Virtual Threads first image-->
 			<!--Slide 5-->
-
-			<section data-auto-animate>
+			<section>
 				<h3>Extensions to multi-threaded code</h3>
-				<ul>
-					<li><a href="#444-virtual-threadshttpsopenjdkorgjeps444">444: Virtual Threads</a></li>
-				</ul>
+				<h4>444: Virtual Threads</h4>
+				<img class="fragment" src="images/virtual-1.png"></img>
+
+				<p></p>
+				<aside class="notes">
+					<p>
+						so on the left here we have a browser a client is making a call to an application and this
+						application for our example is written in Java and spring in normal spring MVC applications we
+						may do things like read or persist from a database using something like jdbc or jpa we may use
+						an input stream to write to a file we may communicate over HTTP to talk to another service this
+						could be a public API this could be another service in our microservice architecture or it might
+						be communicating to message Brokers.
+					</p>
+					<p>these are all blocking apis</p>
+					<p>
+						so this is where virtual threads
+						make sense, this application that we've been working on works great on our laptop,
+						and even in the initial stages of implementation,
+						<br /><br />
+						however once you start experiencing a high volume of traffic, it is causing it to crash.
+					</p>
+					<p>why is this happening ? what can we do to prevent this? </p>
+
+					<p>This is because of the thread per request us model
+					</p>
+				</aside>
 			</section>
 
-			<!--446: Scoped Values-->
-			<!--Slide 6-->
-			<section data-auto-animate>
+			<!--Virtual Threads second image-->
+			<!--Slide 5-->
+			<section>
 				<h3>Extensions to multi-threaded code</h3>
-				<ul>
-					<li><a href="#444-virtual-threadshttpsopenjdkorgjeps444">444: Virtual Threads</a></li>
-					<li><a href="#446-scoped-values-previewhttpsopenjdkorgjeps446">446: Scoped Values (Preview)</a></li>
-				</ul>
+				<h4>444: Virtual Threads</h4>
+				<img class="fragment" src="images/virtual-2.png"></img>
+
+				<p></p>
+				<aside class="notes">
+					<p>
+						so again we have a client that makes a request over to our server, when that request is
+						happening the server will go ahead, let's say in the instance of talking to a database via jdbc,
+						jpa.
+						<br /><br />
+
+						when we make this request, the thread , the operating system thread, the Java thread -that is
+						tied to the operating system thread is going to be in use.
+						<br />
+						<br />
+
+						because we are talking to a database, this is a blocking operation.
+						<br />
+						<br />
+
+						so while that thread is in use, nothing else can use it.
+						<br />
+						<br />
+
+						And as you can see as our application grows and we need another thread to maybe talk to another
+						database , or we need a thread to make a call to another service, these are all threads being
+						tied up in our system.
+						<br />
+						<br />
+
+						The important part here is that there is a maximum number of concurrent threads that are
+						allowed.
+						<br />
+						<br />
+
+						this is based on your Hardware, the system, Etc .
+						<br />
+						<br />
+
+						when the number of Maximum threads has been reached , each subsequent request will need to wait
+						for a thread to be released to fulfill that request .
+						<br />
+						<br />
+
+						that is why when we experience that high throughput, we can see some slowness in an application
+						, we can even see some 500 errors , because it can't fulfill that request
+						<br />
+						<br />
+
+						so that is thread per request kind of in a nutshell right.
+						<br />
+						<br />
+
+
+					</p>
+				</aside>
 			</section>
 
-			<!--453: Structured Concurrency-->
-			<!--Slide 7-->
-			<section data-auto-animate>
-				<h3>Extensions to multi-threaded code</h3>
 
-				<ul>
-					<li><a href="#444-virtual-threadshttpsopenjdkorgjeps444">444: Virtual Threads</a></li>
-					<li><a href="#446-scoped-values-previewhttpsopenjdkorgjeps446">446: Scoped Values (Preview)</a></li>
-					<li><a href="#453-structured-concurrency-previewhttpsopenjdkorgjeps453">453: Structured Concurrency
-							(Preview)</a></li>
-				</ul>
+			<!--Virtual Threads third image-->
+			<!--Slide 5-->
+			<section>
+				<h3>Extensions to multi-threaded code</h3>
+				<h4>444: Virtual Threads</h4>
+				<img class="fragment" src="images/virtual-3.png"></img>
+
+				<p></p>
+				<aside class="notes">
+					<p>
+						And the reason that happens is because Java is made of threads,
+						<br />
+						<br />
+
+						when you create a new thread in Java it is tied to the operating system threads, this means that
+						we have a finite pool of threads that we can take advantage of
+						<br />
+						<br />
+
+						we just saw what would happen in that scenario
+						<br /><br />
+						so how can we solve for this currently in our applications ?
+					</p>
+				</aside>
 			</section>
+
+			<!--Virtual Threads fourth image-->
+			<!--Slide 5-->
+			<section>
+				<h3>Extensions to multi-threaded code</h3>
+				<h4>444: Virtual Threads</h4>
+				<img class="fragment" src="images/virtual-4.png"></img>
+
+				<p></p>
+				<aside class="notes">
+					<p>
+						when we talk about scalability Solutions, we have one way that we can solve for this.
+						<br /><br />
+						which is addressing this using more Hardware so we could scale vertically, adding more memory or
+						CPU. we can scale horizontally adding more servers
+						<br /><br />
+
+						another approach to this is asynchronous programming, we can solve this by writing non-blocking
+						software, and like any architecture Choice, there are pros and cons to each.
+
+						<br /><br />
+						btw, besides learning curve those Frameworks come at a very significant cost.
+						The programming model is awful, they're
+						hard to debug stack traces are incomprehensible, but we have something better
+						<br /><br />
+						knowing all these how we can solve it ?
+					</p>
+				</aside>
+			</section>
+
+			<!--Virtual Threads fifth image-->
+			<!--Slide 5-->
+			<section>
+				<h3>Extensions to multi-threaded code</h3>
+				<h4>444: Virtual Threads</h4>
+				<img class="fragment" src="images/virtual-5.png"></img>
+
+				<p></p>
+				<aside class="notes">
+					<p>
+						Java introduced virtual threads this is in JDK 19 and 20 as a preview release, and as we know
+						it's already inside jdk 21
+						<br /><br />
+						but what this does is it, allows us to create these virtual threads shown by the V here, and
+						all these virtual threads are really lightweight and inexpensive and easy to create
+						<br /><br />
+
+						And these are tied to a platform thread, that is tied to the operating system thread.
+						<br /><br />
+
+						so no longer are we tying up platform threads that are tied to that operating system threadm
+						we're just using these lightweight virtual threads all over the place
+						<br /><br />
+
+						so this is going to help us with high throughput servers with simple thread per request code
+						code ,using the same apis
+						<br /><br />
+
+						and I think what's really really exciting about this we can do this we can take advantage of
+						virtual threads with little or no code changes in our spring applications.
+					</p>
+				</aside>
+			</section>
+
+			<!--Virtual Threads sixth image-->
+			<!--Slide 5-->
+			<section>
+				<h3>Extensions to multi-threaded code</h3>
+				<h4>444: Virtual Threads</h4>
+				<img class="fragment" src="images/virtual-6.jpeg"></img>
+
+				<aside class="notes">
+					<p>
+						Also virtual threads are real threads but they're much lighter weight, because they don't drag
+						around these huge megabyte scale data structures.
+						<br /><br />
+
+						They store their threads thread Stacks as delimited continuations in the garbage collected Heap.
+						<br /><br />
+
+						So when you when you start a virtual thread , you're paying maybe a couple hundred bytes 
+						<br/><br/>
+						And virtual threads can scale to like a million concurrent connections on a laptop like this one
+						<br /><br />
+
+						but i need to note this that they're not some other kind of weird abstraction, they're real threads,they Implement
+						Java.Lang.thread, they support thread local
+						<br /><br />
+
+						all your thread code just runs, you get clean stack traces, you get clean thread dumps, you get
+						debugging and profiling
+
+						<br /><br />
+						the the point of this is not to make your application go faster virtual threads won't make your
+						threads go your your code go faster but it will make it scale better
+					</p>
+				</aside>
+			</section>
+
+						<!--Virtual Threads sixth image-->
+			<!--Slide 5-->
+			<section>
+				<p>Demo</p>
+				<aside class="notes">
+					<p>
+					Show the demo						
+					</p>
+				</aside>
+			</section>
+
+			<!--Extensions to Multi-threaded code highlist virtual threads-->
+			<!--Slide 4-->
+			<section>
+				<h3>Extensions to multi-threaded code</h3>
+				<ul>
+					<li class="fragment strike highlight-red">444: Virtual Threads</a></li>
+					<li class="fragment highlight-green">446: Scoped Values (Preview)</li>
+					<li class="">453: Structured Concurrency (Preview)</li>
+				</ul>
+				<aside class="notes">
+					<p>A preview feature in JDKs 19 and 20, virtual threads have now been finalized and made it into JDK
+						21 as a new feature.
+
+
+					</p>
+
+				</aside>
+			</section>
+
+
+
 
 
 			<!---->
