@@ -1600,12 +1600,13 @@
 						They store their threads thread Stacks as delimited continuations in the garbage collected Heap.
 						<br /><br />
 
-						So when you when you start a virtual thread , you're paying maybe a couple hundred bytes 
-						<br/><br/>
+						So when you when you start a virtual thread , you're paying maybe a couple hundred bytes
+						<br /><br />
 						And virtual threads can scale to like a million concurrent connections on a laptop like this one
 						<br /><br />
 
-						but i need to note this that they're not some other kind of weird abstraction, they're real threads,they Implement
+						but i need to note this that they're not some other kind of weird abstraction, they're real
+						threads,they Implement
 						Java.Lang.thread, they support thread local
 						<br /><br />
 
@@ -1619,13 +1620,13 @@
 				</aside>
 			</section>
 
-						<!--Virtual Threads sixth image-->
+			<!--Virtual Threads sixth image-->
 			<!--Slide 5-->
 			<section>
 				<p>Demo</p>
 				<aside class="notes">
 					<p>
-					Show the demo						
+						Show the demo
 					</p>
 				</aside>
 			</section>
@@ -1648,40 +1649,6 @@
 
 				</aside>
 			</section>
-
-
-
-
-
-			<!---->
-			<section style="font-size: 30px; margin:0px">
-				<p>some gtexts</p>
-				<pre data-id="code"><code data-line-numbers class="java" data-trim>
-					private int[] findSubArray(int[] array, int targetSum) {
-						int sum = 0;
-						int start = 0;
-				
-						for (int i = 0; i <= array.length; i++) {
-							while (sum > targetSum && start < i - 1) {
-								sum = sum - array[start];
-								start++;
-							}
-							if (sum == targetSum) {
-								System.out.println("bingo");
-							}
-							if (i < array.length) {
-								sum = sum + array[i];
-							}
-						}
-						return null;
-					}
-					
-				</code></pre>
-			</section>
-			<section>
-
-			</section>
-
 
 		</div>
 	</div>
