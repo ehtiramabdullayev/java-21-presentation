@@ -7,7 +7,7 @@
 
 That's it 🚀
 
-#### Basic Setup
+#### Full Setup
 
 ##### Minimum Requirements
 1. Install Node.js (10.0.0 or later)
@@ -15,7 +15,6 @@ That's it 🚀
 2. Clone the repository
   ```
 $ git clone https://github.com/ehtiramabdullayev/java-21-presentation.git
-
   ```
 
 3. Move to java-21-presentation folder and install dependencies
@@ -28,7 +27,6 @@ $ cd java-21-presentation && npm install
   
   ```
 $ npm start
-
   ```
 
  5. Open http://localhost:8000 to view this presentation 
