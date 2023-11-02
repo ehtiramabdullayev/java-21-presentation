@@ -1,4 +1,5 @@
 # Java 21 features presentation
+![java-21-presentation](https://github.com/ehtiramabdullayev/java-21-presentation/assets/7686353/87aab3cc-00a2-4e2c-8c7a-5f5542c14074)
 
 ## Setup guide
 
